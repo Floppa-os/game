@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Поле Чудес</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1>Поле Чудес с Якубовичем и Шлёпой!</h1>
+        
+        <div class="wheel-container">
+            <div class="wheel" id="wheel">
+                <div class="sector" style="background: #ff6b6b;">0</div>
+                <div class="sector" style="background: #4ecdc4;">500</div>
+                <div class="sector" style="background: #45b7d1;">1000</div>
+                <div class="sector" style="background: #96ceb4;">1500</div>
+                <div class="sector" style="background: #ffeaa7;">2000</div>
+                <div class="sector" style="background: #ff9ff3;">БАНКРОТ</div>
+                <div class="sector" style="background: #feca57;">ПРИЗ</div>
+                <div class="sector" style="background: #a29bfe;">5000</div>
+            </div>
+            <button onclick="spinWheel()">Крутить барабан!</button>
+        </div>
+
+        <div class="word-container">
+            <h2>Загаданное слово:</h2>
+            <div id="wordDisplay" class="word"></div>
+        </div>
+
+        <div class="controls">
+            <input type="text" id="letterInput" maxlength="1" placeholder="Введите букву">
+            <button onclick="checkLetter()">Проверить букву</button>
+            <button onclick="guessWord()">Угадать слово целиком</button>
+            <p>Счёт: <span id="score">0</span></p>
+        </div>
+
+        <div class="characters">
+            <img src="yakubovich.jpg" alt="Якубович" class="character" id="yakubovich">
+            <img src="shlepa.jpg" alt="Шлёпа" class="character" id="shlepa">
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
