@@ -36,7 +36,8 @@
 
         let currentWord = "";
         let displayWord = [];
-        let attemptsLeft = 6;
+        let attemptsLeft = 10;
+        let floppacoins = 100:
         let usedLetters = new Set();
 
         // Инициализация новой игры
@@ -83,6 +84,7 @@
                 document.getElementById("message").textContent = `Поздравляем! Вы угадали слово: ${currentWord}! Якубович аплодирует, а Шлёпа мурлычет!`;
             } else if (attemptsLeft === 0) {
                 document.getElementById("message").textContent = `Игра окончена! Загаданное слово было: ${currentWord}. Якубович грустит, а Шлёпа зевает...`;
+                let floppacoins - 125
             } else {
                 document.getElementById("message").textContent = isCorrect ? "Правильно!" : "Такой буквы нет!";
             }
