@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Поле чудес с Якубовичем и Шлёпой!</title>
+</head>
+<body>
+    <h1>Поле чудес с Якубовичем и Шлёпой!</h1>
+
+    <div id="game">
+        <p id="phrase">Загаданное слово: <span id="displayWord"></span></p>
+        <p>Осталось попыток: <span id="attemptsLeft">6</span></p>
+        <p>Использованные буквы: <span id="usedLetters"></span></p>
+
+        <div>
+            <label for="letterInput">Введите букву:</label>
+            <input type="text" id="letterInput" maxlength="1" style="text-transform: uppercase;">
+            <button onclick="checkLetter()">Проверить</button>
+        </div>
+
+        <p id="message"></p>
+        <button onclick="startNewGame()">Новая игра</button>
+    </div>
+
+    <script>
+        // Список слов для угадывания
+        const words = [
+            "ЯКУБОВИЧ",
+            "ШЛЁПА",
+            "ИГРА",
+            "ПОЛЕ",
+            "ЧУДЕС",
+            "КОТ",
+            "ИНТЕРНЕТ"
+        ];
+
+        let currentWord = "";
+        let displayWord = [];
+        let attemptsLeft = 6;
+        let usedLetters = new Set();
+
+        // Инициализация новой игры
+        function startNewGame() {
+            currentWord = words[Math.floor(Math.random() * words.length)];
+            displayWord = Array(currentWord.length).fill("_");
+            attemptsLeft = 6;
+            usedLetters = new Set();
+            updateDisplay();
+            document.getElementById("message").textContent = "Удачи! Угадайте слово.";
+        }
+
+        // Обновление отображения на экране
+        function updateDisplay() {
+            document.getElementById("displayWord").textContent = displayWord.join(" ");
+            document.getElementById("attemptsLeft").textContent = attemptsLeft;
+            document.getElementById("usedLetters").textContent = Array.from(usedLetters).join(", ");
+        }
+
+        // Проверка введённой буквы
+        function checkLetter() {
+            const input = document.getElementById("letterInput");
+            const letter = input.value.toUpperCase();
+            input.value = ""; // Очищаем поле ввода
+
+            if (!letter || usedLetters.has(letter)) return; // Если пусто или уже была
+
+            usedLetters.add(letter);
+
+            let isCorrect = false;
+            for (let i = 0; i < currentWord.length; i++) {
+                if (currentWord[i] === letter) {
+                    displayWord[i] = letter;
+                    isCorrect = true;
+                }
+            }
+
+            if (!isCorrect) {
+                attemptsLeft--;
+            }
+
+            // Проверяем, выиграл ли игрок или проиграл
+            if (!displayWord.includes("_")) {
+                document.getElementById("message").textContent = `Поздравляем! Вы угадали слово: ${currentWord}! Якубович аплодирует, а Шлёпа мурлычет!`;
+            } else if (attemptsLeft === 0) {
+                document.getElementById("message").textContent = `Игра окончена! Загаданное слово было: ${currentWord}. Якубович грустит, а Шлёпа зевает...`;
+            } else {
+                document.getElementById("message").textContent = isCorrect ? "Правильно!" : "Такой буквы нет!";
+            }
+
+            updateDisplay();
+        }
+
+        // Запускаем первую игру при загрузке страницы
+        window.onload = startNewGame;
+    </script>
+</body>
+</html>
