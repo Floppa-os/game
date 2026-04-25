@@ -4,123 +4,145 @@
     <title>Змейка</title>
 </head>
 <body>
-    <h1>Змейка</h1>
     <canvas id="gameCanvas" width="400" height="400"></canvas>
-    <div>Счёт: <span id="score">0</span></div>
     <script>
         // Получаем canvas и контекст для рисования
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        const scoreElement = document.getElementById('score');
 
         // Настройки игры
         const gridSize = 20; // Размер клетки
-        const tileCount = 20; // Количество клеток по горизонтали и вертикали
-        let score = 0;
+        const tileCount = 20; // Количество клеток по горизонтали/вертикали
 
         // Змейка
         let snake = [
-            { x: 10, y: 10 } // Начальная позиция головы
+            {x: 10, y: 10} // Начальная позиция головы змейки
         ];
         let velocityX = 0;
         let velocityY = 0;
 
         // Еда
-        let foodX;
-        let foodY;
-
-        // Генерация еды
-        function generateFood() {
-            foodX = Math.floor(Math.random() * tileCount);
-            foodY = Math.floor(Math.random() * tileCount);
-
-            // Проверяем, чтобы еда не появилась на змейке
-            for (let part of snake) {
-                if (part.x === foodX && part.y === foodY) {
-                    generateFood();
-                }
-            }
-        }
-
-        // Обработка клавиш
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'ArrowUp' && velocityY !== 1) {
-                velocityX = 0;
-                velocityY = -1;
-            } else if (e.key === 'ArrowDown' && velocityY !== -1) {
-                velocityX = 0;
-                velocityY = 1;
-            } else if (e.key === 'ArrowLeft' && velocityX !== 1) {
-                velocityX = -1;
-                velocityY = 0;
-            } else if (e.key === 'ArrowRight' && velocityX !== -1) {
-                velocityX = 1;
-                velocityY = 0;
-            }
-        });
+        let food = {
+            x: Math.floor(Math.random() * tileCount),
+            y: Math.floor(Math.random() * tileCount)
+        };
 
         // Основной игровой цикл
         function gameLoop() {
-            // Очищаем canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Обновляем положение змейки
+            updateSnake();
 
-            // Двигаем змейку
-            const headX = snake[0].x + velocityX;
-            const headY = snake[0].y + velocityY;
-
-            // Проверка на столкновение со стеной
-            if (headX < 0 || headX >= tileCount || headY < 0 || headY >= tileCount) {
+            // Проверяем столкновения
+            if (checkCollision()) {
                 resetGame();
                 return;
             }
 
-            // Проверка на столкновение с собой
+            // Проверяем, съела ли змейка еду
+            if (snake[0].x === food.x && snake[0].y === food.y) {
+                // Увеличиваем змейку
+                snake.unshift({x: food.x, y: food.y});
+                // Создаём новую еду
+                food = {
+                    x: Math.floor(Math.random() * tileCount),
+                    y: Math.floor(Math.random() * tileCount)
+                };
+            } else {
+                // Перемещаем змейку (удаляем последний сегмент)
+                snake.pop();
+            }
+
+            // Рисуем всё
+            draw();
+
+            // Запускаем следующий кадр через 100 мс
+            setTimeout(gameLoop, 100);
+        }
+
+        // Обновление положения змейки
+        function updateSnake() {
+            const head = {x: snake[0].x + velocityX, y: snake[0].y + velocityY};
+            snake.unshift(head);
+        }
+
+        // Проверка столкновений
+        function checkCollision() {
+            const head = snake[0];
+
+            // Столкновение со стенами
+            if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
+                return true;
+            }
+
+            // Столкновение с собой
             for (let i = 1; i < snake.length; i++) {
-                if (snake[i].x === headX && snake[i].y === headY) {
-                    resetGame();
-                    return;
+                if (head.x === snake[i].x && head.y === snake[i].y) {
+                    return true;
                 }
             }
 
-            // Добавляем новую голову
-            snake.unshift({ x: headX, y: headY });
+            return false;
+        }
 
-            // Проверка, съела ли змейка еду
-            if (headX === foodX && headY === foodY) {
-                score++;
-                scoreElement.textContent = score;
-                generateFood();
-            } else {
-                // Если не съела, удаляем хвост
-                snake.pop();
+        // Отрисовка всего на экране
+        function draw() {
+            // Очищаем экран (заливаем чёрным)
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Рисуем змейку (зелёные квадраты)
+            ctx.fillStyle = 'green';
+            for (let segment of snake) {
+                ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 2, gridSize - 2);
             }
 
             // Рисуем еду (красный квадрат)
             ctx.fillStyle = 'red';
-            ctx.fillRect(foodX * gridSize, foodY * gridSize, gridSize - 2, gridSize - 2);
-
-            // Рисуем змейку (зелёные квадраты)
-            ctx.fillStyle = 'green';
-            for (let part of snake) {
-                ctx.fillRect(part.x * gridSize, part.y * gridSize, gridSize - 2, gridSize - 2);
-            }
-
-            setTimeout(gameLoop, 100); // Запускаем следующий кадр через 100 мс
+            ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize - 2, gridSize - 2);
         }
 
-        // Сброс игры
+        // Сброс игры при столкновении
         function resetGame() {
-            alert('Игра окончена! Ваш счёт: ' + score);
-            snake = [{ x: 10, y: 10 }];
+            snake = [{x: 10, y: 10}];
             velocityX = 0;
             velocityY = 0;
-            score = 0;
-            scoreElement.textContent = score;
-            generateFood();
+            food = {
+                x: Math.floor(Math.random() * tileCount),
+                y: Math.floor(Math.random() * tileCount)
+            };
         }
 
+        // Обработка нажатий клавиш
+        document.addEventListener('keydown', function(e) {
+            switch (e.key) {
+                case 'ArrowUp':
+                    if (velocityY !== 1) { // Запрещаем разворачиваться на 180 градусов
+                        velocityX = 0;
+                        velocityY = -1;
+                    }
+                    break;
+                case 'ArrowDown':
+                    if (velocityY !== -1) {
+                        velocityX = 0;
+                        velocityY = 1;
+                    }
+                    break;
+                case 'ArrowLeft':
+                    if (velocityX !== 1) {
+                        velocityX = -1;
+                        velocityY = 0;
+                    }
+                    break;
+                case 'ArrowRight':
+                    if (velocityX !== -1) {
+                        velocityX = 1;
+                        velocityY = 0;
+                    }
+                    break;
+            }
+        });
+
         // Запуск игры
-        generateFood();
         gameLoop();
     </script>
 </body>
