@@ -18,13 +18,14 @@
         const tileCount = 20; // Размер поля в клетках (20x20)
         let score = 0;
 
-        // Начальное положение змейки (одна клетка)
-        let snake = [{x: 10, y: 10}];
+        
+        // Змейка
+        let snake = [{x: 1, y: 1}];
         let velocityX = 0;
         let velocityY = 0;
         let nextVelocityX = 0;
         let nextVelocityY = 0;
-
+        
         // Яблоко
         let apple = {x: 5, y: 5};
 
