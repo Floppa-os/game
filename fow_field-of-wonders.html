@@ -7,7 +7,6 @@
 </head>
 <body>
     <h1>Поле чудес!</h1>
-    <img src="yakubovich.png" alt="Якубович" width="500" height="300">
     <p><strong>Ведущий:</strong> <span id="host">Якубович</span></p>
     <p><strong>Гость:</strong> <span id="guest">Шлёпа</span></p>
 
@@ -36,7 +35,7 @@
         let secretWord = '';
         let displayedWord = [];
         let usedLetters = [];
-        let attemptsLeft = 10;
+        let attemptsLeft = 33;
         let currentCategory = '';
 
         // Словарь категорий и слов
@@ -62,7 +61,7 @@
 
             displayedWord = Array(secretWord.length).fill('_');
             usedLetters = [];
-            attemptsLeft = 10;
+            attemptsLeft = 33;
 
             updateDisplay();
             document.getElementById('message').textContent = '';
